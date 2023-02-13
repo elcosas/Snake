@@ -13,7 +13,7 @@ def main():
 
     running = True
     while running:
-        clock.tick(5)
+        clock.tick(10)
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False
@@ -56,18 +56,16 @@ class Snake(pygame.sprite.Sprite):
             self.dir = [1, 0]
 
     def move_snake(self, grid):
-        for index, seg in enumerate(self.segments):
-            if index == 0:
-                pos = [seg.x, seg.y]
-                seg.move_ip(self.dir[0], self.dir[1])
-                grid[seg.x][seg.y] = seg
-                grid[pos[0]][pos[1]] = None
-            else:
-                old_pos = [seg.x, seg.y]
-                seg.move(pos[0] - seg.x, pos[1] - seg.y)
-                grid[pos[0]][pos[1]] = seg
-                grid[old_pos[0]][old_pos[1]] = None
-                old_pos = pos
+        for i in range(len(self.segments)-1, 0, -1):
+            if i == len(self.segments)-1:
+                grid[self.segments[i].x][self.segments[i].y] = None
+            new_x = self.segments[i-1].x - self.segments[i].x
+            new_y = self.segments[i-1].y - self.segments[i].y
+            self.segments[i].move_ip(new_x, new_y)
+            grid[self.segments[i].x][self.segments[i].y] = self.segments[i]
+        head = self.segments[0]
+        head.move_ip(self.dir[0], self.dir[1])
+        grid[head.x][head.y] = head
 
 if __name__ == '__main__':
     main()
