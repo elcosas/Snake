@@ -1,3 +1,4 @@
+import random
 import pygame
 from pygame.locals import *
 
@@ -7,6 +8,8 @@ def main():
     pygame.init()
     clock = pygame.time.Clock()
     grid = [[None for y in range(0, 600 // BLOCKSIZE)] for x in range(0, 800 // BLOCKSIZE)]
+
+    SPAWNAPPLE = pygame.USEREVENT + 1
 
     window = pygame.display.set_mode((800, 600)) 
     player = Snake((400, 300))
@@ -66,6 +69,15 @@ class Snake(pygame.sprite.Sprite):
         head = self.segments[0]
         head.move_ip(self.dir[0], self.dir[1])
         grid[head.x][head.y] = head
+
+class Apple(pygame.sprite.Sprite):
+    """Apple that can be consumed by snake, spawns
+    randomly on the grid"""
+    def __init__(self, coords):
+        super(Apple, self).__init__()
+        self.surface = pygame.Surface(BLOCKSIZE, BLOCKSIZE)
+        self.surface.fill((255, 0, 0))
+        self.rect = self.surface.get_rect((coords[0] // BLOCKSIZE, coords[1] // BLOCKSIZE))
 
 if __name__ == '__main__':
     main()
