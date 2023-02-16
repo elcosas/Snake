@@ -25,6 +25,9 @@ def main():
             elif event.type == SPAWNAPPLE:
                 new_x = choice(range(0, 800 // BLOCKSIZE))
                 new_y = choice(range(0, 600 // BLOCKSIZE))
+                while grid[new_x][new_y] in player.segments:
+                    new_x = choice(range(0, 800 // BLOCKSIZE))
+                    new_y = choice(range(0, 600 // BLOCKSIZE))
                 apple = Apple((new_x, new_y))
                 grid[new_x][new_y] = apple
 
@@ -50,7 +53,7 @@ def draw_grid(grid, window):
 
 class Snake(pygame.sprite.Sprite):
     """Uses a list of rects to represent segments."""
-    def __init__(self, coords, start_length=3):
+    def __init__(self, coords, start_length=5):
         super(Snake, self).__init__()
         self.segments = []
         for seg in range(start_length):
@@ -79,6 +82,9 @@ class Snake(pygame.sprite.Sprite):
         head = self.segments[0]
         if not self.__collision(grid, active_apl, events):
             head.move_ip(self.dir[0], self.dir[1])
+        if head.x < 0 or head.y < 0:
+            # TODO: Call Game Over
+            pygame.quit()
         grid[head.x][head.y] = head
 
     def __collision(self, grid, active_apl, events):
