@@ -59,13 +59,13 @@ class Snake(pygame.sprite.Sprite):
         self.dir = [0, -1]
 
     def get_input(self, pressed_keys):
-        if pressed_keys[K_UP]:
+        if pressed_keys[K_UP] and self.dir[1] != 1:
             self.dir = [0, -1]
-        elif pressed_keys[K_DOWN]:
+        elif pressed_keys[K_DOWN] and self.dir[1] != -1:
             self.dir = [0, 1]
-        elif pressed_keys[K_LEFT]:
+        elif pressed_keys[K_LEFT] and self.dir[0] != 1:
             self.dir = [-1, 0]
-        elif pressed_keys[K_RIGHT]:
+        elif pressed_keys[K_RIGHT] and self.dir[0] != -1:
             self.dir = [1, 0]
 
     def move_snake(self, grid, active_apl, events):
@@ -82,20 +82,23 @@ class Snake(pygame.sprite.Sprite):
         grid[head.x][head.y] = head
 
     def __collision(self, grid, active_apl, events):
-        future_point = [self.segments[0].x + self.dir[0], self.segments[1].y + self.dir[1]]
+        future_point = [self.segments[0].x + self.dir[0], self.segments[0].y + self.dir[1]]
         if grid[future_point[0]][future_point[1]] in self.segments:
             # TODO: Call Game Over
             pygame.quit()
             return True
         elif type(grid[future_point[0]][future_point[1]]) == Apple:
+            rect = pygame.Rect(future_point[0], future_point[1], BLOCKSIZE, BLOCKSIZE)
+            self.segments.insert(0, rect)
+            grid[future_point[0]][future_point[1]] = rect
             active_apl.kill()
             pygame.event.post(events)
+            return True
         return False
 
 class Apple(pygame.sprite.Sprite):
     """Apple that can be consumed by snake, spawns
     randomly on the grid"""
-    SCORE = 1
     def __init__(self, coords):
         super(Apple, self).__init__()
         self.surface = pygame.Surface((BLOCKSIZE, BLOCKSIZE))
